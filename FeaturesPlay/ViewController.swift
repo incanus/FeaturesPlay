@@ -124,20 +124,27 @@ class ViewController: UIViewController, MKMapViewDelegate {
             var closestAnnotation: MKPointAnnotation?
             for annotation in mapView.annotations {
                 if let point = annotation as? MKPointAnnotation {
-                    let p = mapView.convertCoordinate(point.coordinate, toPointToView: mapView)
-                    if (CGRectContainsPoint(rect, p)) {
-                        if (closestAnnotation == nil && lastTap != CGPointZero) {
+                    if (closestAnnotation == nil && lastTap != CGPointZero) {
+                        closestAnnotation = point
+                    } else if (closestAnnotation != nil) {
+                        let tapLocation = CLLocation(latitude: tapCoordinate.latitude, longitude: tapCoordinate.longitude)
+                        let oldDistance = tapLocation.distanceFromLocation(CLLocation(latitude: closestAnnotation!.coordinate.latitude, longitude: closestAnnotation!.coordinate.longitude))
+                        let newDistance = tapLocation.distanceFromLocation(CLLocation(latitude: point.coordinate.latitude, longitude: point.coordinate.longitude))
+                        if (newDistance < oldDistance) {
                             closestAnnotation = point
-                        } else if (closestAnnotation != nil) {
-                            let tapLocation = CLLocation(latitude: tapCoordinate.latitude, longitude: tapCoordinate.longitude)
-                            let oldDistance = tapLocation.distanceFromLocation(CLLocation(latitude: closestAnnotation!.coordinate.latitude, longitude: closestAnnotation!.coordinate.longitude))
-                            let newDistance = tapLocation.distanceFromLocation(CLLocation(latitude: point.coordinate.latitude, longitude: point.coordinate.longitude))
-                            if (newDistance < oldDistance) {
-                                closestAnnotation = point
-                            }
                         }
                     }
                 }
+            }
+
+            if (closestAnnotation != nil) {
+                let p = mapView.convertCoordinate(closestAnnotation!.coordinate, toPointToView: mapView)
+                let c = UIGraphicsGetCurrentContext()
+                CGContextSetStrokeColorWithColor(c, UIColor.blackColor().CGColor)
+                CGContextSetLineWidth(c, 3)
+                CGContextMoveToPoint(c, p.x, p.y)
+                CGContextAddLineToPoint(c, lastTap.x, lastTap.y)
+                CGContextStrokePath(c)
             }
 
             var count = 0
@@ -145,24 +152,8 @@ class ViewController: UIViewController, MKMapViewDelegate {
                 if let point = annotation as? MKPointAnnotation {
                     let p = mapView.convertCoordinate(point.coordinate, toPointToView: mapView)
                     if (CGRectContainsPoint(rect, p)) {
-                        var image: UIImage
-
-                        if (point == closestAnnotation) {
-                            image = selectedImage
-
-                            let c = UIGraphicsGetCurrentContext()
-                            CGContextSetStrokeColorWithColor(c, UIColor.blackColor().CGColor)
-                            CGContextSetLineWidth(c, 3)
-
-                            CGContextMoveToPoint(c, p.x, p.y)
-                            CGContextAddLineToPoint(c, lastTap.x, lastTap.y)
-                            CGContextStrokePath(c)
-                        } else {
-                            image = defaultImage
-                        }
-
+                        let image = (point == closestAnnotation ? selectedImage : defaultImage)
                         image.drawInRect(CGRect(x: p.x - 10, y: p.y - 10, width: 20, height: 20))
-
                         count++
                     }
                 }
