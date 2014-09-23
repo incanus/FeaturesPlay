@@ -27,6 +27,8 @@ class ViewController: UIViewController, MKMapViewDelegate {
         overlay = Overlay(frame: view.bounds, mapView: mapView)
         view.insertSubview(overlay, aboveSubview: mapView)
 
+        mapView.addGestureRecognizer(UITapGestureRecognizer(target: overlay, action: "overlayTap:"))
+
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             [unowned self] in
             let jsonData = NSData(contentsOfFile: NSBundle.mainBundle().pathForResource("fire-hydrants", ofType: "geojson")!)
@@ -69,17 +71,21 @@ class ViewController: UIViewController, MKMapViewDelegate {
         return view
     }
 
-    func updateOverlay(displayLink: CADisplayLink!) {
-
+    func mapView(mapView: MKMapView!, didSelectAnnotationView view: MKAnnotationView!) {
         overlay.setNeedsDisplay()
+    }
 
+    func updateOverlay(displayLink: CADisplayLink!) {
+        overlay.setNeedsDisplay()
     }
 
     class Overlay: UIView {
 
         var mapView: MKMapView!
         var debugLabel: UILabel!
-        var image: UIImage!
+        var defaultImage: UIImage!
+        var selectedImage: UIImage!
+        var lastTap: CGPoint!
 
         init(frame: CGRect, mapView: MKMapView) {
             super.init(frame: frame)
@@ -96,19 +102,53 @@ class ViewController: UIViewController, MKMapViewDelegate {
             debugLabel.numberOfLines = 0
             self.addSubview(debugLabel)
 
-            image = annotationImageWithColor(UIColor.blueColor())
+            defaultImage = annotationImageWithColor(UIColor.blueColor())
+            selectedImage = annotationImageWithColor(UIColor.redColor())
+
+            lastTap = CGPointZero
         }
 
         required init(coder aDecoder: NSCoder) {
             super.init(coder: aDecoder)
         }
 
+        func overlayTap(gesture: UITapGestureRecognizer) {
+            lastTap = gesture.locationInView(gesture.view)
+        }
+
         override func drawRect(rect: CGRect) {
-            var count = 0
+            let c = UIGraphicsGetCurrentContext()
+            CGContextSetStrokeColorWithColor(c, UIColor.greenColor().colorWithAlphaComponent(0.25).CGColor)
+            CGContextSetLineWidth(c, 1)
+
+            let tapCoordinate = mapView.convertPoint(lastTap, toCoordinateFromView: mapView)
+            var closestAnnotation: MKPointAnnotation?
+
             for annotation in mapView.annotations {
                 if let point = annotation as? MKPointAnnotation {
                     let p = mapView.convertCoordinate(point.coordinate, toPointToView: mapView)
                     if (CGRectContainsPoint(rect, p)) {
+                        if (closestAnnotation == nil && lastTap != CGPointZero) {
+                            closestAnnotation = point
+                        } else if (closestAnnotation != nil) {
+                            let tapLocation = CLLocation(latitude: tapCoordinate.latitude, longitude: tapCoordinate.longitude)
+                            let oldDistance = tapLocation.distanceFromLocation(CLLocation(latitude: closestAnnotation!.coordinate.latitude, longitude: closestAnnotation!.coordinate.longitude))
+                            let newDistance = tapLocation.distanceFromLocation(CLLocation(latitude: point.coordinate.latitude, longitude: point.coordinate.longitude))
+                            if (newDistance < oldDistance) {
+                                closestAnnotation = point
+                            }
+                        }
+                    }
+                }
+            }
+
+            var count = 0
+
+            for annotation in mapView.annotations {
+                if let point = annotation as? MKPointAnnotation {
+                    let p = mapView.convertCoordinate(point.coordinate, toPointToView: mapView)
+                    if (CGRectContainsPoint(rect, p)) {
+                        let image = (point == closestAnnotation ? selectedImage : defaultImage)
                         image.drawInRect(CGRect(x: p.x - 10, y: p.y - 10, width: 20, height: 20))
                         count++
                     }
