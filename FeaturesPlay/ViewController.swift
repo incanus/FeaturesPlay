@@ -4,8 +4,6 @@ import MapKit
 class ViewController: UIViewController, MKMapViewDelegate {
 
     var mapView: MKMapView!
-    var redImage: UIImage!
-    var blueImage: UIImage!
     var displayLink: CADisplayLink!
     var overlay: Overlay!
 
@@ -17,9 +15,6 @@ class ViewController: UIViewController, MKMapViewDelegate {
         mapView = MKMapView(frame: view.bounds)
         mapView.delegate = self
         view.addSubview(mapView)
-
-        redImage = UIImage() //annotationImageWithColor(UIColor.redColor())
-        blueImage = annotationImageWithColor(UIColor.blueColor())
 
         displayLink = CADisplayLink(target: self, selector: "updateOverlay:")
         displayLink.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
@@ -66,7 +61,7 @@ class ViewController: UIViewController, MKMapViewDelegate {
 
     func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
         let view = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "pin")
-        view.image = redImage
+        view.image = UIImage() //annotationImageWithColor(UIColor.redColor())
 
         return view
     }
@@ -117,45 +112,38 @@ class ViewController: UIViewController, MKMapViewDelegate {
         }
 
         override func drawRect(rect: CGRect) {
-            let touchRect = CGRect(x: lastTap.x - 22, y: lastTap.y - 22, width: 44, height: 44)
-            annotationImageWithColor(UIColor.blackColor().colorWithAlphaComponent(0.5), diameter: 30).drawInRect(touchRect)
+            var annotations = mapView.annotations as [MKPointAnnotation]
 
-            let tapCoordinate = mapView.convertPoint(lastTap, toCoordinateFromView: mapView)
-            var closestAnnotation: MKPointAnnotation?
-            for annotation in mapView.annotations {
-                if let point = annotation as? MKPointAnnotation {
-                    if (closestAnnotation == nil && lastTap != CGPointZero) {
-                        closestAnnotation = point
-                    } else if (closestAnnotation != nil) {
-                        let tapLocation = CLLocation(latitude: tapCoordinate.latitude, longitude: tapCoordinate.longitude)
-                        let oldDistance = tapLocation.distanceFromLocation(CLLocation(latitude: closestAnnotation!.coordinate.latitude, longitude: closestAnnotation!.coordinate.longitude))
-                        let newDistance = tapLocation.distanceFromLocation(CLLocation(latitude: point.coordinate.latitude, longitude: point.coordinate.longitude))
-                        if (newDistance < oldDistance) {
-                            closestAnnotation = point
-                        }
-                    }
+            if (lastTap != CGPointZero) {
+                let touchRect = CGRect(x: lastTap.x - 22, y: lastTap.y - 22, width: 44, height: 44)
+                annotationImageWithColor(UIColor.blackColor().colorWithAlphaComponent(0.5), diameter: 30).drawInRect(touchRect)
+
+                let tapCoordinate = mapView.convertPoint(lastTap, toCoordinateFromView: mapView)
+                let tapLocation = CLLocation(latitude: tapCoordinate.latitude, longitude: tapCoordinate.longitude)
+                annotations = sorted(annotations) {
+                    let d1 = CLLocation(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude).distanceFromLocation(tapLocation)
+                    let d2 = CLLocation(latitude: $1.coordinate.latitude, longitude: $1.coordinate.longitude).distanceFromLocation(tapLocation)
+                    return d1 < d2
+                }
+
+                if let closestAnnotation = annotations.first {
+                    let p = mapView.convertCoordinate(closestAnnotation.coordinate, toPointToView: mapView)
+                    let c = UIGraphicsGetCurrentContext()
+                    CGContextSetStrokeColorWithColor(c, UIColor.blackColor().CGColor)
+                    CGContextSetLineWidth(c, 3)
+                    CGContextMoveToPoint(c, p.x, p.y)
+                    CGContextAddLineToPoint(c, lastTap.x, lastTap.y)
+                    CGContextStrokePath(c)
                 }
             }
 
-            if (closestAnnotation != nil) {
-                let p = mapView.convertCoordinate(closestAnnotation!.coordinate, toPointToView: mapView)
-                let c = UIGraphicsGetCurrentContext()
-                CGContextSetStrokeColorWithColor(c, UIColor.blackColor().CGColor)
-                CGContextSetLineWidth(c, 3)
-                CGContextMoveToPoint(c, p.x, p.y)
-                CGContextAddLineToPoint(c, lastTap.x, lastTap.y)
-                CGContextStrokePath(c)
-            }
-
             var count = 0
-            for annotation in mapView.annotations {
-                if let point = annotation as? MKPointAnnotation {
-                    let p = mapView.convertCoordinate(point.coordinate, toPointToView: mapView)
-                    if (CGRectContainsPoint(rect, p)) {
-                        let image = (point == closestAnnotation ? selectedImage : defaultImage)
-                        image.drawInRect(CGRect(x: p.x - 10, y: p.y - 10, width: 20, height: 20))
-                        count++
-                    }
+            for annotation in annotations {
+                let p = mapView.convertCoordinate(annotation.coordinate, toPointToView: mapView)
+                if (CGRectContainsPoint(rect, p)) {
+                    let image = (lastTap != CGPointZero && annotation == annotations.first ? selectedImage : defaultImage)
+                    image.drawInRect(CGRect(x: p.x - 10, y: p.y - 10, width: 20, height: 20))
+                    count++
                 }
             }
 
