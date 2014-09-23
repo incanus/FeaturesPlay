@@ -80,12 +80,21 @@ class ViewController: UIViewController, MKMapViewDelegate {
     class Overlay: UIView {
 
         var mapView: MKMapView!
+        var debugLabel: UILabel!
         var image: UIImage!
 
         init(frame: CGRect, mapView: MKMapView) {
-            self.mapView = mapView
-            image = annotationImageWithColor(UIColor.blueColor())
             super.init(frame: frame)
+
+            self.mapView = mapView
+
+            debugLabel = UILabel(frame: CGRect(x: 10, y: 30, width: 200, height: 50))
+            debugLabel.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.9)
+            debugLabel.textAlignment = .Center
+            debugLabel.numberOfLines = 0
+            self.addSubview(debugLabel)
+
+            image = annotationImageWithColor(UIColor.blueColor())
         }
 
         required init(coder aDecoder: NSCoder) {
@@ -93,14 +102,18 @@ class ViewController: UIViewController, MKMapViewDelegate {
         }
 
         override func drawRect(rect: CGRect) {
+            var count = 0
             for annotation in mapView.annotations {
                 if let point = annotation as? MKPointAnnotation {
                     let p = mapView.convertCoordinate(point.coordinate, toPointToView: mapView)
                     if (CGRectContainsPoint(rect, p)) {
                         image.drawInRect(CGRect(x: p.x - 10, y: p.y - 10, width: 20, height: 20))
+                        count++
                     }
                 }
             }
+
+            debugLabel.text = "Total: \(mapView.annotations.count)\nRendered: \(count)"
         }
 
     }
