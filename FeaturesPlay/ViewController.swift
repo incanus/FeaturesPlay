@@ -25,8 +25,6 @@ class ViewController: UIViewController, MKMapViewDelegate {
         displayLink.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
 
         overlay = Overlay(frame: view.bounds, mapView: mapView)
-        overlay.backgroundColor = UIColor.clearColor()
-        overlay.userInteractionEnabled = false
         view.insertSubview(overlay, aboveSubview: mapView)
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
@@ -85,6 +83,10 @@ class ViewController: UIViewController, MKMapViewDelegate {
 
         init(frame: CGRect, mapView: MKMapView) {
             super.init(frame: frame)
+
+            userInteractionEnabled = false
+
+            backgroundColor = UIColor.clearColor()
 
             self.mapView = mapView
 
