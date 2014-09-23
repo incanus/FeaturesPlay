@@ -4,6 +4,7 @@ import MapKit
 class ViewController: UIViewController {
 
     var mapView: MKMapView?
+    let maxAnnotationCount = 500
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,11 +32,14 @@ class ViewController: UIViewController {
                     let coordinates = geometry["coordinates"] as NSArray
                     return CLLocationCoordinate2DMake(coordinates[1] as Double, coordinates[0] as Double)
                 }()
-                annotations.addObject(annotation)
+                if (annotations.count < self.maxAnnotationCount) {
+                    annotations.addObject(annotation)
+                }
             }
             dispatch_async(dispatch_get_main_queue()) {
                 [unowned self] in
                 if let mapView = self.mapView {
+                    NSLog("adding %i annotations", annotations.count)
                     mapView.addAnnotations(annotations)
                     mapView.showAnnotations(mapView.annotations, animated: false)
                 }
