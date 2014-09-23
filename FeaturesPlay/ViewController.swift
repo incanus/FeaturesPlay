@@ -3,14 +3,14 @@ import MapKit
 
 class ViewController: UIViewController {
 
-    var mapView: MKMapView?
+    var mapView: MKMapView!
     let maxAnnotationCount = 500
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         mapView = MKMapView(frame: view.bounds)
-        view.addSubview(mapView!)
+        view.addSubview(mapView)
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             [unowned self] in
