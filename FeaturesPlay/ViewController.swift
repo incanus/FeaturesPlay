@@ -96,7 +96,9 @@ class ViewController: UIViewController, MKMapViewDelegate {
             for annotation in mapView.annotations {
                 if let point = annotation as? MKPointAnnotation {
                     let p = mapView.convertCoordinate(point.coordinate, toPointToView: mapView)
-                    image.drawInRect(CGRect(x: p.x - 10, y: p.y - 10, width: 20, height: 20))
+                    if (CGRectContainsPoint(rect, p)) {
+                        image.drawInRect(CGRect(x: p.x - 10, y: p.y - 10, width: 20, height: 20))
+                    }
                 }
             }
         }
