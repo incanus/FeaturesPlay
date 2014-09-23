@@ -12,6 +12,7 @@ class ViewController: UIViewController {
         view.addSubview(mapView!)
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+            [unowned self] in
             let jsonData = NSData(contentsOfFile: NSBundle.mainBundle().pathForResource("fire-hydrants", ofType: "geojson")!)
             let jsonObject = NSJSONSerialization.JSONObjectWithData(jsonData, options: nil, error: nil) as NSDictionary
             let hydrants = jsonObject["features"] as NSArray
@@ -33,6 +34,7 @@ class ViewController: UIViewController {
                 annotations.addObject(annotation)
             }
             dispatch_async(dispatch_get_main_queue()) {
+                [unowned self] in
                 if let mapView = self.mapView {
                     mapView.addAnnotations(annotations)
                     mapView.showAnnotations(mapView.annotations, animated: false)
