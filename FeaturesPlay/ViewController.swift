@@ -4,8 +4,12 @@ import MapKit
 class ViewController: UIViewController, MKMapViewDelegate {
 
     var mapView: MKMapView!
-    var image: UIImage?
-    let maxAnnotationCount = 500
+    var redImage: UIImage!
+    var blueImage: UIImage!
+    var displayLink: CADisplayLink!
+    var overlay: Overlay!
+
+    let maxAnnotationCount = 100
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -13,6 +17,17 @@ class ViewController: UIViewController, MKMapViewDelegate {
         mapView = MKMapView(frame: view.bounds)
         mapView.delegate = self
         view.addSubview(mapView)
+
+        redImage = UIImage() //annotationImageWithColor(UIColor.redColor())
+        blueImage = annotationImageWithColor(UIColor.blueColor())
+
+        displayLink = CADisplayLink(target: self, selector: "updateOverlay:")
+        displayLink.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
+
+        overlay = Overlay(frame: view.bounds, mapView: mapView)
+        overlay.backgroundColor = UIColor.clearColor()
+        overlay.userInteractionEnabled = false
+        view.insertSubview(overlay, aboveSubview: mapView)
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             [unowned self] in
@@ -50,24 +65,59 @@ class ViewController: UIViewController, MKMapViewDelegate {
     }
 
     func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
-        if (image == nil) {
-            let diameter = 20
-            UIGraphicsBeginImageContext(CGSize(width: diameter, height: diameter))
-            let c = UIGraphicsGetCurrentContext()
-            CGContextSetFillColorWithColor(c, UIColor.redColor().colorWithAlphaComponent(0.25).CGColor)
-            CGContextSetStrokeColorWithColor(c, UIColor.redColor().CGColor)
-            CGContextSetLineWidth(c, 1)
-            CGContextAddEllipseInRect(c, CGRect(x: 0, y: 0, width: diameter, height: diameter))
-            CGContextFillPath(c)
-            CGContextStrokePath(c)
-            image = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext()
-        }
-
         let view = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "pin")
-        view.image = image
+        view.image = redImage
 
         return view
     }
 
+    func updateOverlay(displayLink: CADisplayLink!) {
+
+        overlay.setNeedsDisplay()
+
+    }
+
+    class Overlay: UIView {
+
+        var mapView: MKMapView!
+        var image: UIImage!
+
+        init(frame: CGRect, mapView: MKMapView) {
+            self.mapView = mapView
+            image = annotationImageWithColor(UIColor.blueColor())
+            super.init(frame: frame)
+        }
+
+        required init(coder aDecoder: NSCoder) {
+            super.init(coder: aDecoder)
+        }
+
+        override func drawRect(rect: CGRect) {
+            for annotation in mapView.annotations {
+                if let point = annotation as? MKPointAnnotation {
+                    let p = mapView.convertCoordinate(point.coordinate, toPointToView: mapView)
+                    image.drawInRect(CGRect(x: p.x - 10, y: p.y - 10, width: 20, height: 20))
+                }
+            }
+        }
+
+    }
+
+}
+
+func annotationImageWithColor(color: UIColor, diameter: Int = 20) -> UIImage {
+    var image: UIImage
+
+    UIGraphicsBeginImageContext(CGSize(width: diameter, height: diameter))
+    let c = UIGraphicsGetCurrentContext()
+    CGContextSetFillColorWithColor(c, color.colorWithAlphaComponent(0.5).CGColor)
+    CGContextSetStrokeColorWithColor(c, color.CGColor)
+    CGContextSetLineWidth(c, 1)
+    CGContextAddEllipseInRect(c, CGRect(x: 0, y: 0, width: diameter, height: diameter))
+    CGContextFillPath(c)
+    CGContextStrokePath(c)
+    image = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+
+    return image
 }
