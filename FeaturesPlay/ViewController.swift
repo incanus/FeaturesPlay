@@ -117,13 +117,11 @@ class ViewController: UIViewController, MKMapViewDelegate {
         }
 
         override func drawRect(rect: CGRect) {
-            let c = UIGraphicsGetCurrentContext()
-            CGContextSetStrokeColorWithColor(c, UIColor.greenColor().colorWithAlphaComponent(0.25).CGColor)
-            CGContextSetLineWidth(c, 1)
+            let touchRect = CGRect(x: lastTap.x - 22, y: lastTap.y - 22, width: 44, height: 44)
+            annotationImageWithColor(UIColor.blackColor().colorWithAlphaComponent(0.5), diameter: 30).drawInRect(touchRect)
 
             let tapCoordinate = mapView.convertPoint(lastTap, toCoordinateFromView: mapView)
             var closestAnnotation: MKPointAnnotation?
-
             for annotation in mapView.annotations {
                 if let point = annotation as? MKPointAnnotation {
                     let p = mapView.convertCoordinate(point.coordinate, toPointToView: mapView)
@@ -143,13 +141,28 @@ class ViewController: UIViewController, MKMapViewDelegate {
             }
 
             var count = 0
-
             for annotation in mapView.annotations {
                 if let point = annotation as? MKPointAnnotation {
                     let p = mapView.convertCoordinate(point.coordinate, toPointToView: mapView)
                     if (CGRectContainsPoint(rect, p)) {
-                        let image = (point == closestAnnotation ? selectedImage : defaultImage)
+                        var image: UIImage
+
+                        if (point == closestAnnotation) {
+                            image = selectedImage
+
+                            let c = UIGraphicsGetCurrentContext()
+                            CGContextSetStrokeColorWithColor(c, UIColor.blackColor().CGColor)
+                            CGContextSetLineWidth(c, 3)
+
+                            CGContextMoveToPoint(c, p.x, p.y)
+                            CGContextAddLineToPoint(c, lastTap.x, lastTap.y)
+                            CGContextStrokePath(c)
+                        } else {
+                            image = defaultImage
+                        }
+
                         image.drawInRect(CGRect(x: p.x - 10, y: p.y - 10, width: 20, height: 20))
+
                         count++
                     }
                 }
