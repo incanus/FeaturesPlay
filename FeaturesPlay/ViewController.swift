@@ -1,15 +1,17 @@
 import UIKit
 import MapKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, MKMapViewDelegate {
 
     var mapView: MKMapView!
+    var image: UIImage?
     let maxAnnotationCount = 500
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         mapView = MKMapView(frame: view.bounds)
+        mapView.delegate = self
         view.addSubview(mapView)
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
@@ -45,6 +47,27 @@ class ViewController: UIViewController {
                 }
             }
         }
+    }
+
+    func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
+        if (image == nil) {
+            let diameter = 20
+            UIGraphicsBeginImageContext(CGSize(width: diameter, height: diameter))
+            let c = UIGraphicsGetCurrentContext()
+            CGContextSetFillColorWithColor(c, UIColor.redColor().colorWithAlphaComponent(0.25).CGColor)
+            CGContextSetStrokeColorWithColor(c, UIColor.redColor().CGColor)
+            CGContextSetLineWidth(c, 1)
+            CGContextAddEllipseInRect(c, CGRect(x: 0, y: 0, width: diameter, height: diameter))
+            CGContextFillPath(c)
+            CGContextStrokePath(c)
+            image = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+        }
+
+        let view = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "pin")
+        view.image = image
+
+        return view
     }
 
 }
