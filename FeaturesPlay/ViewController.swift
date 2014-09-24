@@ -135,24 +135,21 @@ class Overlay: UIView {
             }
         }
 
-        var count = 0
+        var visibleAnnotations = [MKPointAnnotation]()
         for annotation in annotations {
             let p = annotation.convertedPointInMapView(mapView)
             if (CGRectContainsPoint(rect, p)) {
-                count++
+                visibleAnnotations.append(annotation)
             }
         }
 
-        for annotation in annotations {
+        for annotation in visibleAnnotations {
             let p = annotation.convertedPointInMapView(mapView)
-            if (CGRectContainsPoint(rect, p)) {
-                let image = (lastTap != CGPointZero && annotation == annotations.first ? selectedImage : defaultImage)
-                image.drawInRect(CGRect(x: p.x - 10, y: p.y - 10, width: 20, height: 20))
-                count++
-            }
+            let image = (lastTap != CGPointZero && annotation == annotations.first ? selectedImage : defaultImage)
+            image.drawInRect(CGRect(x: p.x - 10, y: p.y - 10, width: 20, height: 20))
         }
 
-        debugLabel.text = "Total: \(mapView.annotations.count)\nRendered: \(count)"
+        debugLabel.text = "Total: \(annotations.count)\nRendered: \(visibleAnnotations.count)"
     }
 
     func sortedAnnotations(annotations: [MKPointAnnotation], location: CLLocation) -> [MKPointAnnotation] {
