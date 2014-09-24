@@ -80,8 +80,6 @@ class OverlayView: UIView {
 
     var mapView: MKMapView!
     var debugLabel: UILabel!
-    var defaultImage: UIImage!
-    var selectedImage: UIImage!
     var lastTap: CGPoint!
 
     init(frame: CGRect, mapView: MKMapView) {
@@ -98,9 +96,6 @@ class OverlayView: UIView {
         debugLabel.textAlignment = .Center
         debugLabel.numberOfLines = 0
         self.addSubview(debugLabel)
-
-        defaultImage = MKPointAnnotation.imageWithColor(UIColor.blueColor())
-        selectedImage = MKPointAnnotation.imageWithColor(UIColor.redColor())
 
         lastTap = CGPointZero
     }
@@ -134,18 +129,35 @@ class OverlayView: UIView {
             CGContextStrokePath(c)
         }
 
-        var visibleAnnotations = Dictionary<MKPointAnnotation, CGPoint>()
-
+        var visibleAnnotations = [(MKPointAnnotation, CGPoint, Int)]()
+        var index = 0
         for annotation in annotations {
             let p = annotation.convertedPointInMapView(mapView)
             if (CGRectContainsPoint(rect, p)) {
-                visibleAnnotations[annotation] = p
+                visibleAnnotations.append((annotation, p, index))
+                index++
             }
         }
 
-        for (annotation, p) in visibleAnnotations {
-            let image = (lastTap != CGPointZero && annotation == annotations.first ? selectedImage : defaultImage)
-            image.drawInRect(CGRect(x: p.x - 10, y: p.y - 10, width: 20, height: 20))
+        var diameter: CGFloat = 40
+        var drawDiameter: CGFloat
+        var image: UIImage
+        var blueImage = MKPointAnnotation.imageWithColor(UIColor.blueColor(), diameter: diameter)
+        for (annotation, p, index) in visibleAnnotations {
+            if (lastTap != CGPointZero) {
+                if (index == 0) {
+                    drawDiameter = diameter * 0.75
+                    image = MKPointAnnotation.imageWithColor(UIColor.redColor(), diameter: diameter)
+                } else {
+                    drawDiameter = diameter * 0.75 - ((diameter / 2) * (CGFloat(index) / CGFloat(visibleAnnotations.count)))
+                    image = blueImage
+                }
+            } else {
+                drawDiameter = diameter * 0.75
+                image = blueImage
+            }
+            let r = CGRect(x: p.x - drawDiameter / 2, y: p.y - drawDiameter / 2, width: drawDiameter, height: drawDiameter)
+            image.drawInRect(r)
         }
 
         debugLabel.text = "Total: \(annotations.count)\nRendered: \(visibleAnnotations.count)"
@@ -168,7 +180,7 @@ class OverlayView: UIView {
 
 extension MKPointAnnotation {
 
-    class func imageWithColor(color: UIColor, diameter: Int = 20) -> UIImage {
+    class func imageWithColor(color: UIColor, diameter: CGFloat = 20) -> UIImage {
         var image: UIImage
 
         UIGraphicsBeginImageContextWithOptions(CGSize(width: diameter, height: diameter), false, UIScreen.mainScreen().scale)
