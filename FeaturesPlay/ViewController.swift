@@ -118,7 +118,7 @@ class Overlay: UIView {
 
         if (lastTap != CGPointZero) {
             let touchRect = CGRect(x: lastTap.x - 22, y: lastTap.y - 22, width: 44, height: 44)
-            MKPointAnnotation.imageWithColor(UIColor.blackColor().colorWithAlphaComponent(0.5), diameter: 30).drawInRect(touchRect)
+            MKPointAnnotation.imageWithColor(UIColor.blackColor().colorWithAlphaComponent(0.5), diameter: 44).drawInRect(touchRect)
 
             let tapCoordinate = mapView.convertPoint(lastTap, toCoordinateFromView: mapView)
             let tapLocation = CLLocation(latitude: tapCoordinate.latitude, longitude: tapCoordinate.longitude)
@@ -172,7 +172,7 @@ extension MKPointAnnotation {
     class func imageWithColor(color: UIColor, diameter: Int = 20) -> UIImage {
         var image: UIImage
 
-        UIGraphicsBeginImageContext(CGSize(width: diameter, height: diameter))
+        UIGraphicsBeginImageContextWithOptions(CGSize(width: diameter, height: diameter), false, UIScreen.mainScreen().scale)
         let c = UIGraphicsGetCurrentContext()
         CGContextSetFillColorWithColor(c, color.colorWithAlphaComponent(0.5).CGColor)
         CGContextSetStrokeColorWithColor(c, color.CGColor)
