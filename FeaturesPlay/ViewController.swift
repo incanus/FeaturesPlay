@@ -122,11 +122,7 @@ class Overlay: UIView {
 
             let tapCoordinate = mapView.convertPoint(lastTap, toCoordinateFromView: mapView)
             let tapLocation = CLLocation(latitude: tapCoordinate.latitude, longitude: tapCoordinate.longitude)
-            annotations = sorted(annotations) {
-                let d1 = CLLocation(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude).distanceFromLocation(tapLocation)
-                let d2 = CLLocation(latitude: $1.coordinate.latitude, longitude: $1.coordinate.longitude).distanceFromLocation(tapLocation)
-                return d1 < d2
-            }
+            annotations = sortedAnnotations(annotations, location: tapLocation)
 
             if let closestAnnotation = annotations.first {
                 let p = closestAnnotation.convertedPointInMapView(mapView)
@@ -157,6 +153,19 @@ class Overlay: UIView {
         }
 
         debugLabel.text = "Total: \(mapView.annotations.count)\nRendered: \(count)"
+    }
+
+    func sortedAnnotations(annotations: [MKPointAnnotation], location: CLLocation) -> [MKPointAnnotation] {
+
+        func defaultSorter(annotations: [MKPointAnnotation], location: CLLocation) -> [MKPointAnnotation] {
+            return sorted(annotations) {
+                let d1 = CLLocation(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude).distanceFromLocation(location)
+                let d2 = CLLocation(latitude: $1.coordinate.latitude, longitude: $1.coordinate.longitude).distanceFromLocation(location)
+                return d1 < d2
+            }
+        }
+
+        return defaultSorter(annotations, location)
     }
 
 }
