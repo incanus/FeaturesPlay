@@ -74,99 +74,110 @@ class ViewController: UIViewController, MKMapViewDelegate {
         overlay.setNeedsDisplay()
     }
 
-    class Overlay: UIView {
+}
 
-        var mapView: MKMapView!
-        var debugLabel: UILabel!
-        var defaultImage: UIImage!
-        var selectedImage: UIImage!
-        var lastTap: CGPoint!
+class Overlay: UIView {
 
-        init(frame: CGRect, mapView: MKMapView) {
-            super.init(frame: frame)
+    var mapView: MKMapView!
+    var debugLabel: UILabel!
+    var defaultImage: UIImage!
+    var selectedImage: UIImage!
+    var lastTap: CGPoint!
 
-            userInteractionEnabled = false
+    init(frame: CGRect, mapView: MKMapView) {
+        super.init(frame: frame)
 
-            backgroundColor = UIColor.clearColor()
+        userInteractionEnabled = false
 
-            self.mapView = mapView
+        backgroundColor = UIColor.clearColor()
 
-            debugLabel = UILabel(frame: CGRect(x: 10, y: 30, width: 200, height: 50))
-            debugLabel.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.9)
-            debugLabel.textAlignment = .Center
-            debugLabel.numberOfLines = 0
-            self.addSubview(debugLabel)
+        self.mapView = mapView
 
-            defaultImage = annotationImageWithColor(UIColor.blueColor())
-            selectedImage = annotationImageWithColor(UIColor.redColor())
+        debugLabel = UILabel(frame: CGRect(x: 10, y: 30, width: 200, height: 50))
+        debugLabel.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.9)
+        debugLabel.textAlignment = .Center
+        debugLabel.numberOfLines = 0
+        self.addSubview(debugLabel)
 
-            lastTap = CGPointZero
-        }
+        defaultImage = MKPointAnnotation.annotationImageWithColor(UIColor.blueColor())
+        selectedImage = MKPointAnnotation.annotationImageWithColor(UIColor.redColor())
 
-        required init(coder aDecoder: NSCoder) {
-            super.init(coder: aDecoder)
-        }
+        lastTap = CGPointZero
+    }
 
-        func overlayTap(gesture: UITapGestureRecognizer) {
-            lastTap = gesture.locationInView(gesture.view)
-        }
+    required init(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
 
-        override func drawRect(rect: CGRect) {
-            var annotations = mapView.annotations as [MKPointAnnotation]
+    func overlayTap(gesture: UITapGestureRecognizer) {
+        lastTap = gesture.locationInView(gesture.view)
+    }
 
-            if (lastTap != CGPointZero) {
-                let touchRect = CGRect(x: lastTap.x - 22, y: lastTap.y - 22, width: 44, height: 44)
-                annotationImageWithColor(UIColor.blackColor().colorWithAlphaComponent(0.5), diameter: 30).drawInRect(touchRect)
+    override func drawRect(rect: CGRect) {
+        var annotations = mapView.annotations as [MKPointAnnotation]
 
-                let tapCoordinate = mapView.convertPoint(lastTap, toCoordinateFromView: mapView)
-                let tapLocation = CLLocation(latitude: tapCoordinate.latitude, longitude: tapCoordinate.longitude)
-                annotations = sorted(annotations) {
-                    let d1 = CLLocation(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude).distanceFromLocation(tapLocation)
-                    let d2 = CLLocation(latitude: $1.coordinate.latitude, longitude: $1.coordinate.longitude).distanceFromLocation(tapLocation)
-                    return d1 < d2
-                }
+        if (lastTap != CGPointZero) {
+            let touchRect = CGRect(x: lastTap.x - 22, y: lastTap.y - 22, width: 44, height: 44)
+            MKPointAnnotation.annotationImageWithColor(UIColor.blackColor().colorWithAlphaComponent(0.5), diameter: 30).drawInRect(touchRect)
 
-                if let closestAnnotation = annotations.first {
-                    let p = mapView.convertCoordinate(closestAnnotation.coordinate, toPointToView: mapView)
-                    let c = UIGraphicsGetCurrentContext()
-                    CGContextSetStrokeColorWithColor(c, UIColor.blackColor().CGColor)
-                    CGContextSetLineWidth(c, 3)
-                    CGContextMoveToPoint(c, p.x, p.y)
-                    CGContextAddLineToPoint(c, lastTap.x, lastTap.y)
-                    CGContextStrokePath(c)
-                }
+            let tapCoordinate = mapView.convertPoint(lastTap, toCoordinateFromView: mapView)
+            let tapLocation = CLLocation(latitude: tapCoordinate.latitude, longitude: tapCoordinate.longitude)
+            annotations = sorted(annotations) {
+                let d1 = CLLocation(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude).distanceFromLocation(tapLocation)
+                let d2 = CLLocation(latitude: $1.coordinate.latitude, longitude: $1.coordinate.longitude).distanceFromLocation(tapLocation)
+                return d1 < d2
             }
 
-            var count = 0
-            for annotation in annotations {
-                let p = mapView.convertCoordinate(annotation.coordinate, toPointToView: mapView)
-                if (CGRectContainsPoint(rect, p)) {
-                    let image = (lastTap != CGPointZero && annotation == annotations.first ? selectedImage : defaultImage)
-                    image.drawInRect(CGRect(x: p.x - 10, y: p.y - 10, width: 20, height: 20))
-                    count++
-                }
+            if let closestAnnotation = annotations.first {
+                let p = mapView.convertCoordinate(closestAnnotation.coordinate, toPointToView: mapView)
+                let c = UIGraphicsGetCurrentContext()
+                CGContextSetStrokeColorWithColor(c, UIColor.blackColor().CGColor)
+                CGContextSetLineWidth(c, 3)
+                CGContextMoveToPoint(c, p.x, p.y)
+                CGContextAddLineToPoint(c, lastTap.x, lastTap.y)
+                CGContextStrokePath(c)
             }
-
-            debugLabel.text = "Total: \(mapView.annotations.count)\nRendered: \(count)"
         }
 
+        var count = 0
+        for annotation in annotations {
+            let p = mapView.convertCoordinate(annotation.coordinate, toPointToView: mapView)
+            if (CGRectContainsPoint(rect, p)) {
+                count++
+            }
+        }
+
+        for annotation in annotations {
+            let p = mapView.convertCoordinate(annotation.coordinate, toPointToView: mapView)
+            if (CGRectContainsPoint(rect, p)) {
+                let image = (lastTap != CGPointZero && annotation == annotations.first ? selectedImage : defaultImage)
+                image.drawInRect(CGRect(x: p.x - 10, y: p.y - 10, width: 20, height: 20))
+                count++
+            }
+        }
+
+        debugLabel.text = "Total: \(mapView.annotations.count)\nRendered: \(count)"
     }
 
 }
 
-func annotationImageWithColor(color: UIColor, diameter: Int = 20) -> UIImage {
-    var image: UIImage
+extension MKPointAnnotation {
 
-    UIGraphicsBeginImageContext(CGSize(width: diameter, height: diameter))
-    let c = UIGraphicsGetCurrentContext()
-    CGContextSetFillColorWithColor(c, color.colorWithAlphaComponent(0.5).CGColor)
-    CGContextSetStrokeColorWithColor(c, color.CGColor)
-    CGContextSetLineWidth(c, 1)
-    CGContextAddEllipseInRect(c, CGRect(x: 0, y: 0, width: diameter, height: diameter))
-    CGContextFillPath(c)
-    CGContextStrokePath(c)
-    image = UIGraphicsGetImageFromCurrentImageContext()
-    UIGraphicsEndImageContext()
+    class func annotationImageWithColor(color: UIColor, diameter: Int = 20) -> UIImage {
+        var image: UIImage
 
-    return image
+        UIGraphicsBeginImageContext(CGSize(width: diameter, height: diameter))
+        let c = UIGraphicsGetCurrentContext()
+        CGContextSetFillColorWithColor(c, color.colorWithAlphaComponent(0.5).CGColor)
+        CGContextSetStrokeColorWithColor(c, color.CGColor)
+        CGContextSetLineWidth(c, 1)
+        CGContextAddEllipseInRect(c, CGRect(x: 0, y: 0, width: diameter, height: diameter))
+        CGContextFillPath(c)
+        CGContextStrokePath(c)
+        image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return image
+    }
+
 }
