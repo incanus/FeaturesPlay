@@ -5,7 +5,7 @@ class ViewController: UIViewController, MKMapViewDelegate {
 
     var mapView: MKMapView!
     var displayLink: CADisplayLink!
-    var overlay: Overlay!
+    var overlay: OverlayView!
 
     let maxAnnotationCount = 100
 
@@ -19,7 +19,7 @@ class ViewController: UIViewController, MKMapViewDelegate {
         displayLink = CADisplayLink(target: self, selector: "updateOverlayWithDisplayLink:")
         displayLink.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
 
-        overlay = Overlay(frame: view.bounds, mapView: mapView)
+        overlay = OverlayView(frame: view.bounds, mapView: mapView)
         view.insertSubview(overlay, aboveSubview: mapView)
 
         mapView.addGestureRecognizer(UITapGestureRecognizer(target: overlay, action: "overlayTapWithGesture:"))
@@ -76,7 +76,7 @@ class ViewController: UIViewController, MKMapViewDelegate {
 
 }
 
-class Overlay: UIView {
+class OverlayView: UIView {
 
     var mapView: MKMapView!
     var debugLabel: UILabel!
@@ -132,10 +132,10 @@ class Overlay: UIView {
             CGContextMoveToPoint(c, p.x, p.y)
             CGContextAddLineToPoint(c, lastTap.x, lastTap.y)
             CGContextStrokePath(c)
-
         }
 
         var visibleAnnotations = Dictionary<MKPointAnnotation, CGPoint>()
+
         for annotation in annotations {
             let p = annotation.convertedPointInMapView(mapView)
             if (CGRectContainsPoint(rect, p)) {
