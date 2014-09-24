@@ -61,7 +61,7 @@ class ViewController: UIViewController, MKMapViewDelegate {
 
     func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
         let view = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "pin")
-        view.image = UIImage() //annotationImageWithColor(UIColor.redColor())
+        view.image = UIImage() //imageWithColor(UIColor.redColor())
 
         return view
     }
@@ -99,8 +99,8 @@ class Overlay: UIView {
         debugLabel.numberOfLines = 0
         self.addSubview(debugLabel)
 
-        defaultImage = MKPointAnnotation.annotationImageWithColor(UIColor.blueColor())
-        selectedImage = MKPointAnnotation.annotationImageWithColor(UIColor.redColor())
+        defaultImage = MKPointAnnotation.imageWithColor(UIColor.blueColor())
+        selectedImage = MKPointAnnotation.imageWithColor(UIColor.redColor())
 
         lastTap = CGPointZero
     }
@@ -118,7 +118,7 @@ class Overlay: UIView {
 
         if (lastTap != CGPointZero) {
             let touchRect = CGRect(x: lastTap.x - 22, y: lastTap.y - 22, width: 44, height: 44)
-            MKPointAnnotation.annotationImageWithColor(UIColor.blackColor().colorWithAlphaComponent(0.5), diameter: 30).drawInRect(touchRect)
+            MKPointAnnotation.imageWithColor(UIColor.blackColor().colorWithAlphaComponent(0.5), diameter: 30).drawInRect(touchRect)
 
             let tapCoordinate = mapView.convertPoint(lastTap, toCoordinateFromView: mapView)
             let tapLocation = CLLocation(latitude: tapCoordinate.latitude, longitude: tapCoordinate.longitude)
@@ -163,7 +163,7 @@ class Overlay: UIView {
 
 extension MKPointAnnotation {
 
-    class func annotationImageWithColor(color: UIColor, diameter: Int = 20) -> UIImage {
+    class func imageWithColor(color: UIColor, diameter: Int = 20) -> UIImage {
         var image: UIImage
 
         UIGraphicsBeginImageContext(CGSize(width: diameter, height: diameter))
