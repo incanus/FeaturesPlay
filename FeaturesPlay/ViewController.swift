@@ -135,16 +135,15 @@ class Overlay: UIView {
 
         }
 
-        var visibleAnnotations = [MKPointAnnotation]()
+        var visibleAnnotations = Dictionary<MKPointAnnotation, CGPoint>()
         for annotation in annotations {
             let p = annotation.convertedPointInMapView(mapView)
             if (CGRectContainsPoint(rect, p)) {
-                visibleAnnotations.append(annotation)
+                visibleAnnotations[annotation] = p
             }
         }
 
-        for annotation in visibleAnnotations {
-            let p = annotation.convertedPointInMapView(mapView)
+        for (annotation, p) in visibleAnnotations {
             let image = (lastTap != CGPointZero && annotation == annotations.first ? selectedImage : defaultImage)
             image.drawInRect(CGRect(x: p.x - 10, y: p.y - 10, width: 20, height: 20))
         }
