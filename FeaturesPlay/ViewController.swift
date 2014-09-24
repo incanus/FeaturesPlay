@@ -124,15 +124,15 @@ class Overlay: UIView {
             let tapLocation = CLLocation(latitude: tapCoordinate.latitude, longitude: tapCoordinate.longitude)
             annotations = sortedAnnotations(annotations, location: tapLocation)
 
-            if let closestAnnotation = annotations.first {
-                let p = closestAnnotation.convertedPointInMapView(mapView)
-                let c = UIGraphicsGetCurrentContext()
-                CGContextSetStrokeColorWithColor(c, UIColor.blackColor().CGColor)
-                CGContextSetLineWidth(c, 3)
-                CGContextMoveToPoint(c, p.x, p.y)
-                CGContextAddLineToPoint(c, lastTap.x, lastTap.y)
-                CGContextStrokePath(c)
-            }
+            let closestAnnotation = annotations.first!
+            let p = closestAnnotation.convertedPointInMapView(mapView)
+            let c = UIGraphicsGetCurrentContext()
+            CGContextSetStrokeColorWithColor(c, UIColor.blackColor().CGColor)
+            CGContextSetLineWidth(c, 3)
+            CGContextMoveToPoint(c, p.x, p.y)
+            CGContextAddLineToPoint(c, lastTap.x, lastTap.y)
+            CGContextStrokePath(c)
+
         }
 
         var visibleAnnotations = [MKPointAnnotation]()
