@@ -129,7 +129,7 @@ class Overlay: UIView {
             }
 
             if let closestAnnotation = annotations.first {
-                let p = mapView.convertCoordinate(closestAnnotation.coordinate, toPointToView: mapView)
+                let p = closestAnnotation.convertedPointInMapView(mapView)
                 let c = UIGraphicsGetCurrentContext()
                 CGContextSetStrokeColorWithColor(c, UIColor.blackColor().CGColor)
                 CGContextSetLineWidth(c, 3)
@@ -141,14 +141,14 @@ class Overlay: UIView {
 
         var count = 0
         for annotation in annotations {
-            let p = mapView.convertCoordinate(annotation.coordinate, toPointToView: mapView)
+            let p = annotation.convertedPointInMapView(mapView)
             if (CGRectContainsPoint(rect, p)) {
                 count++
             }
         }
 
         for annotation in annotations {
-            let p = mapView.convertCoordinate(annotation.coordinate, toPointToView: mapView)
+            let p = annotation.convertedPointInMapView(mapView)
             if (CGRectContainsPoint(rect, p)) {
                 let image = (lastTap != CGPointZero && annotation == annotations.first ? selectedImage : defaultImage)
                 image.drawInRect(CGRect(x: p.x - 10, y: p.y - 10, width: 20, height: 20))
@@ -178,6 +178,10 @@ extension MKPointAnnotation {
         UIGraphicsEndImageContext()
 
         return image
+    }
+
+    func convertedPointInMapView(mapView: MKMapView) -> CGPoint {
+        return mapView.convertCoordinate(self.coordinate, toPointToView: mapView)
     }
 
 }
