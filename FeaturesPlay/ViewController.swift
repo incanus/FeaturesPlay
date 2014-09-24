@@ -124,6 +124,7 @@ class OverlayView: UIView {
             let c = UIGraphicsGetCurrentContext()
             CGContextSetStrokeColorWithColor(c, UIColor.blackColor().CGColor)
             CGContextSetLineWidth(c, 3)
+            CGContextSetLineCap(c, kCGLineCapRound)
             CGContextMoveToPoint(c, p.x, p.y)
             CGContextAddLineToPoint(c, lastTap.x, lastTap.y)
             CGContextStrokePath(c)
