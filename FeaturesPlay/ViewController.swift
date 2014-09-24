@@ -16,13 +16,13 @@ class ViewController: UIViewController, MKMapViewDelegate {
         mapView.delegate = self
         view.addSubview(mapView)
 
-        displayLink = CADisplayLink(target: self, selector: "updateOverlay:")
+        displayLink = CADisplayLink(target: self, selector: "updateOverlayWithDisplayLink:")
         displayLink.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
 
         overlay = Overlay(frame: view.bounds, mapView: mapView)
         view.insertSubview(overlay, aboveSubview: mapView)
 
-        mapView.addGestureRecognizer(UITapGestureRecognizer(target: overlay, action: "overlayTap:"))
+        mapView.addGestureRecognizer(UITapGestureRecognizer(target: overlay, action: "overlayTapWithGesture:"))
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             [unowned self] in
@@ -70,7 +70,7 @@ class ViewController: UIViewController, MKMapViewDelegate {
         overlay.setNeedsDisplay()
     }
 
-    func updateOverlay(displayLink: CADisplayLink!) {
+    func updateOverlayWithDisplayLink(displayLink: CADisplayLink!) {
         overlay.setNeedsDisplay()
     }
 
@@ -109,7 +109,7 @@ class Overlay: UIView {
         super.init(coder: aDecoder)
     }
 
-    func overlayTap(gesture: UITapGestureRecognizer) {
+    func overlayTapWithGesture(gesture: UITapGestureRecognizer) {
         lastTap = gesture.locationInView(gesture.view)
     }
 
