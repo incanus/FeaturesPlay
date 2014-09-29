@@ -22,4 +22,4 @@ Rough work in progress, but just to cover the bases, some of the formulas are bo
      - [ ] S2
      - [ ] R-Tree
      - [ ] Quad tree
-     
+ * [ ] rotation transforms
