@@ -11,7 +11,7 @@ Rough work in progress, but just to cover the bases, some of the formulas are bo
  * [x] pixel width for zoom
  * [x] meters/pixel at given latitude & zoom
  * [x] Spherical Mercator
- * ~~[x] Mercator (ellipsoid)~~
+ * [x] ~~Mercator (ellipsoid)~~
  * [x] `CGPoint`/coordinate translations
  * [x] distance formulas
      - [x] Spherical Cosines
