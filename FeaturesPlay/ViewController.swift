@@ -1,5 +1,6 @@
 import UIKit
 import MapKit
+import Projection
 
 class ViewController: UIViewController, MKMapViewDelegate {
 
@@ -51,7 +52,6 @@ class ViewController: UIViewController, MKMapViewDelegate {
             dispatch_async(dispatch_get_main_queue()) {
                 [unowned self] in
                 if let mapView = self.mapView {
-                    NSLog("adding %i annotations", annotations.count)
                     mapView.addAnnotations(annotations)
                     mapView.showAnnotations(mapView.annotations, animated: false)
                 }
@@ -106,6 +106,74 @@ class OverlayView: UIView {
 
     func overlayTapWithGesture(gesture: UITapGestureRecognizer) {
         lastTap = gesture.locationInView(gesture.view)
+
+        let tapCoordinate = mapView.convertPoint(lastTap, toCoordinateFromView: mapView)
+
+        NSLog("MapKit lat/lon: %f, %f", tapCoordinate.latitude, tapCoordinate.longitude)
+        NSLog("MKMapPoint: %f, %f", MKMapPointForCoordinate(tapCoordinate).y, MKMapPointForCoordinate(tapCoordinate).x)
+
+        NSLog("===")
+
+        NSLog("Projection point: %e, %e", Projection.Utilities.projectedMetersFromCoordinate(tapCoordinate).y, Projection.Utilities.projectedMetersFromCoordinate(tapCoordinate).x)
+
+//        let foo = Projection.Sampler()
+
+
+
+
+        NSLog("===")
+
+        for (lat: Double, lon: Double) in [(85, -180), (45, -120), (0, 0), (-45, 120), (-85, 180)] {
+            let p = Projection.Utilities.projectedMetersFromCoordinate(CLLocationCoordinate2D(latitude: lat, longitude: lon))
+            NSLog("Projection of %f, %f: %e, %e", lat, lon, p.y, p.x)
+        }
+
+
+
+
+        NSLog("===")
+
+//        NSLog("mapping scale: %f", <#args: CVarArgType#>...)
+
+
+
+
+//        NSLog("1: 38.896725, -76.988960")
+//        NSLog("m: %f, %f", MKMapPointForCoordinate(CLLocationCoordinate2D(latitude: 38.896725, longitude: -76.988960)).x, MKMapPointForCoordinate(CLLocationCoordinate2D(latitude: 38.896725, longitude: -76.988960)).y)
+//        NSLog("1: 38, -76")
+//        NSLog("m: %f, %f", MKMapPointForCoordinate(CLLocationCoordinate2D(latitude: 38, longitude: -76)).x, MKMapPointForCoordinate(CLLocationCoordinate2D(latitude: 38, longitude: -76)).y)
+
+
+
+
+
+//        NSLog("MKMapPoints/m at 0N: %f at 45N: %f at 85N: %f", MKMapPointsPerMeterAtLatitude(0), MKMapPointsPerMeterAtLatitude(45), MKMapPointsPerMeterAtLatitude(85))
+
+
+        let scale = mapView.visibleMapRect.size.width / MKMapSizeWorld.width
+
+
+        NSLog("MapKit zoom scale: %f", Projection.Utilities.zoomForScale(scale))
+
+//        NSLog("pixels at circumference: %f", pow(2, Projection.zoomForScale(scale)) * 256)
+
+        NSLog("===")
+
+
+
+        NSLog("MKMapSizeWorld: %f, %f", MKMapSizeWorld.width, MKMapSizeWorld.height)
+
+        NSLog("===")
+
+        let nw = MKMapPointForCoordinate(CLLocationCoordinate2DMake(85, -180))
+        let se = MKMapPointForCoordinate(CLLocationCoordinate2DMake(-85, 180))
+
+        NSLog("NW MKMapPoint: %f, %f", nw.y, nw.x)
+        NSLog("SE MKMapPoint: %f, %f", se.y, se.x)
+
+        NSLog("===")
+        NSLog("===")
+
     }
 
     override func drawRect(rect: CGRect) {
@@ -140,7 +208,7 @@ class OverlayView: UIView {
             }
         }
 
-        var diameter: CGFloat = 40
+        let diameter: CGFloat = 40
         var drawDiameter: CGFloat
         var image: UIImage
         var blueImage = MKPointAnnotation.imageWithColor(UIColor.blueColor(), diameter: diameter)
@@ -182,8 +250,6 @@ class OverlayView: UIView {
 extension MKPointAnnotation {
 
     class func imageWithColor(color: UIColor, diameter: CGFloat = 20) -> UIImage {
-        var image: UIImage
-
         UIGraphicsBeginImageContextWithOptions(CGSize(width: diameter, height: diameter), false, UIScreen.mainScreen().scale)
         let c = UIGraphicsGetCurrentContext()
         CGContextSetFillColorWithColor(c, color.colorWithAlphaComponent(0.5).CGColor)
@@ -192,7 +258,7 @@ extension MKPointAnnotation {
         CGContextAddEllipseInRect(c, CGRect(x: 0, y: 0, width: diameter, height: diameter))
         CGContextFillPath(c)
         CGContextStrokePath(c)
-        image = UIGraphicsGetImageFromCurrentImageContext()
+        let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
 
         return image

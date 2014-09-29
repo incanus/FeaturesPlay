@@ -9,19 +9,67 @@
 /* Begin PBXBuildFile section */
 		DD71EEEE19BA64BA00D68BB1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD71EEED19BA64BA00D68BB1 /* AppDelegate.swift */; };
 		DD71EEF019BA64BA00D68BB1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD71EEEF19BA64BA00D68BB1 /* ViewController.swift */; };
+		DD82D0C119D6399400AB2774 /* Projection.h in Headers */ = {isa = PBXBuildFile; fileRef = DD82D0BF19D6397200AB2774 /* Projection.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DD93573C19D626030065F692 /* Projection.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD93572819D626030065F692 /* Projection.framework */; };
+		DD93573D19D626030065F692 /* Projection.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DD93572819D626030065F692 /* Projection.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		DD93574819D626390065F692 /* Projection.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD93574719D626390065F692 /* Projection.swift */; };
 		DDA3DB0719D0F62D0046623D /* fire-hydrants.geojson in Resources */ = {isa = PBXBuildFile; fileRef = DDA3DB0619D0F62D0046623D /* fire-hydrants.geojson */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		DD93573A19D626030065F692 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD71EEE019BA64BA00D68BB1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DD93572719D626030065F692;
+			remoteInfo = Projection;
+		};
+		DD93573E19D626030065F692 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD71EEE019BA64BA00D68BB1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DD93572719D626030065F692;
+			remoteInfo = Projection;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		DD93574519D626030065F692 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				DD93573D19D626030065F692 /* Projection.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		DD2F1CAB19D9E6C1000DD6E7 /* FeaturesPlay.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = FeaturesPlay.playground; sourceTree = "<group>"; };
 		DD71EEE819BA64BA00D68BB1 /* FeaturesPlay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeaturesPlay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD71EEEC19BA64BA00D68BB1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DD71EEED19BA64BA00D68BB1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DD71EEEF19BA64BA00D68BB1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		DD82D0BF19D6397200AB2774 /* Projection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Projection.h; sourceTree = "<group>"; };
+		DD93572819D626030065F692 /* Projection.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Projection.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD93572B19D626030065F692 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DD93574719D626390065F692 /* Projection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Projection.swift; sourceTree = "<group>"; };
 		DDA3DB0619D0F62D0046623D /* fire-hydrants.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "fire-hydrants.geojson"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		DD71EEE519BA64BA00D68BB1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DD93573C19D626030065F692 /* Projection.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DD93572419D626030065F692 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -34,8 +82,10 @@
 		DD71EEDF19BA64BA00D68BB1 = {
 			isa = PBXGroup;
 			children = (
+				DD2F1CAB19D9E6C1000DD6E7 /* FeaturesPlay.playground */,
 				DD71EEEA19BA64BA00D68BB1 /* FeaturesPlay */,
 				DDA3DB0519D0F6170046623D /* Data */,
+				DD93572919D626030065F692 /* Projection */,
 				DD71EEE919BA64BA00D68BB1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -44,6 +94,7 @@
 			isa = PBXGroup;
 			children = (
 				DD71EEE819BA64BA00D68BB1 /* FeaturesPlay.app */,
+				DD93572819D626030065F692 /* Projection.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -66,6 +117,24 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		DD93572919D626030065F692 /* Projection */ = {
+			isa = PBXGroup;
+			children = (
+				DD82D0BF19D6397200AB2774 /* Projection.h */,
+				DD93574719D626390065F692 /* Projection.swift */,
+				DD93572A19D626030065F692 /* Supporting Files */,
+			);
+			path = Projection;
+			sourceTree = "<group>";
+		};
+		DD93572A19D626030065F692 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				DD93572B19D626030065F692 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		DDA3DB0519D0F6170046623D /* Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -77,6 +146,17 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		DD93572519D626030065F692 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DD82D0C119D6399400AB2774 /* Projection.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		DD71EEE719BA64BA00D68BB1 /* FeaturesPlay */ = {
 			isa = PBXNativeTarget;
@@ -85,15 +165,36 @@
 				DD71EEE419BA64BA00D68BB1 /* Sources */,
 				DD71EEE519BA64BA00D68BB1 /* Frameworks */,
 				DD71EEE619BA64BA00D68BB1 /* Resources */,
+				DD93574519D626030065F692 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				DD93573B19D626030065F692 /* PBXTargetDependency */,
+				DD93573F19D626030065F692 /* PBXTargetDependency */,
 			);
 			name = FeaturesPlay;
 			productName = FeaturesPlay;
 			productReference = DD71EEE819BA64BA00D68BB1 /* FeaturesPlay.app */;
 			productType = "com.apple.product-type.application";
+		};
+		DD93572719D626030065F692 /* Projection */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DD93574419D626030065F692 /* Build configuration list for PBXNativeTarget "Projection" */;
+			buildPhases = (
+				DD93572319D626030065F692 /* Sources */,
+				DD93572419D626030065F692 /* Frameworks */,
+				DD93572519D626030065F692 /* Headers */,
+				DD93572619D626030065F692 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Projection;
+			productName = Projection;
+			productReference = DD93572819D626030065F692 /* Projection.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
@@ -106,6 +207,9 @@
 				TargetAttributes = {
 					DD71EEE719BA64BA00D68BB1 = {
 						CreatedOnToolsVersion = 6.0;
+					};
+					DD93572719D626030065F692 = {
+						CreatedOnToolsVersion = 6.0.1;
 					};
 				};
 			};
@@ -123,6 +227,7 @@
 			projectRoot = "";
 			targets = (
 				DD71EEE719BA64BA00D68BB1 /* FeaturesPlay */,
+				DD93572719D626030065F692 /* Projection */,
 			);
 		};
 /* End PBXProject section */
@@ -136,6 +241,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DD93572619D626030065F692 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -143,12 +255,33 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DD71EEF019BA64BA00D68BB1 /* ViewController.swift in Sources */,
 				DD71EEEE19BA64BA00D68BB1 /* AppDelegate.swift in Sources */,
+				DD71EEF019BA64BA00D68BB1 /* ViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DD93572319D626030065F692 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DD93574819D626390065F692 /* Projection.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DD93573B19D626030065F692 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DD93572719D626030065F692 /* Projection */;
+			targetProxy = DD93573A19D626030065F692 /* PBXContainerItemProxy */;
+		};
+		DD93573F19D626030065F692 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DD93572719D626030065F692 /* Projection */;
+			targetProxy = DD93573E19D626030065F692 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		DD71EF0219BA64BA00D68BB1 /* Debug */ = {
@@ -252,6 +385,49 @@
 			};
 			name = Release;
 		};
+		DD93574019D626030065F692 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = Projection/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		DD93574119D626030065F692 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Projection/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -269,6 +445,15 @@
 			buildConfigurations = (
 				DD71EF0519BA64BA00D68BB1 /* Debug */,
 				DD71EF0619BA64BA00D68BB1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DD93574419D626030065F692 /* Build configuration list for PBXNativeTarget "Projection" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD93574019D626030065F692 /* Debug */,
+				DD93574119D626030065F692 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
